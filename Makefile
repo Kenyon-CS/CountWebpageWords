@@ -1,4 +1,4 @@
-# Makefile for word_count
+# Makefile for word_count on macOS
 
 CXX = g++
 CXXFLAGS = -Wall -std=c++11
