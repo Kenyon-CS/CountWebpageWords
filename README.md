@@ -8,6 +8,14 @@ To accomplish this, the program will:
 2. Use std::map to count occurrences of each word.
 3. Display the word counts in sorted order.
 
+### To display the word counts in descending order by their count, we need to:
+
+1. Extract the word-count pairs from the std::map.
+1. Store them in a container that allows sorting by value (since std::map is sorted by keys).
+1. Sort the container by the word count in descending order.
+1. Display the sorted result.
+
+
 ## Explanation:
 1. `WriteCallback` Function:
 A callback function used by libcurl to write data to a string.
