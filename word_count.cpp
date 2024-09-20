@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <sstream>
+#include <algorithm>
 #include <cctype>
 #include <curl/curl.h>
 
@@ -32,6 +33,24 @@ string fetchWebPage(const string& url) {
         }
     }
     return data;
+}
+
+// Function to remove HTML tags
+string removeHTMLTags(const string& content) {
+    string result;
+    bool insideTag = false;
+
+    for (char ch : content) {
+        if (ch == '<') {
+            insideTag = true; // Start of an HTML tag
+        } else if (ch == '>') {
+            insideTag = false; // End of an HTML tag
+        } else if (!insideTag) {
+            result += ch; // Add characters outside of tags
+        }
+    }
+
+    return result;
 }
 
 // Function to process the web page content and count words
@@ -67,10 +86,14 @@ int main() {
         return 1;
     }
 
-    map<string, int> wordCount;
-    countWords(content, wordCount);
+    // Remove HTML tags from the fetched content
+    string cleanContent = removeHTMLTags(content);
 
-    cout << "\nWord counts:" << endl;
+    // Word counting
+    map<string, int> wordCount;
+    countWords(cleanContent, wordCount);
+
+    cout << "\nWord counts (HTML tags ignored):" << endl;
     displayWordCounts(wordCount);
 
     return 0;
