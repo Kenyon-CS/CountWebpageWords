@@ -54,8 +54,8 @@ string removeHTMLTags(const string& content) {
     return result;
 }
 
-// Function to process the web page content and count words
-void countWords(const string& content, map<string, int>& wordCount) {
+// Function to process the web page content and count words based on whitelist
+void countWords(const string& content, map<string, int>& wordCount, const set<string>& whitelist) {
     stringstream ss(content);
     string word;
 
@@ -63,7 +63,9 @@ void countWords(const string& content, map<string, int>& wordCount) {
         // Remove punctuation and convert to lowercase
         word.erase(remove_if(word.begin(), word.end(), ::ispunct), word.end());
         transform(word.begin(), word.end(), word.begin(), ::tolower);
-        if (!word.empty()) {
+
+        // Only count words in the whitelist
+        if (!word.empty() && whitelist.find(word) != whitelist.end()) {
             wordCount[word]++;
         }
     }
@@ -92,6 +94,31 @@ void displayWordCountsDescending(const map<string, int>& wordCount) {
     }
 }
 
+// Function to read newline-separated words from a file into a set
+set<string> readWordsFromFile(const string& filename) {
+    set<string> words;
+    string word;
+
+    ifstream file(filename); // Open the file
+
+    // Check if the file was opened successfully
+    if (!file.is_open()) {
+        cerr << "Error: Could not open file " << filename << endl;
+        return words;
+    }
+
+    // Read words line by line from the file
+    while (getline(file, word)) {
+        // Insert each word into the set
+        if (!word.empty()) {
+            words.insert(word);
+        }
+    }
+
+    file.close();  // Close the file
+    return words;
+}
+
 int main() {
     string url;
     cout << "Enter the URL of the web page: ";
@@ -106,9 +133,12 @@ int main() {
     // Remove HTML tags from the fetched content
     string cleanContent = removeHTMLTags(content);
 
+    // Define and fill a whitelist of words (add more words as needed)
+    set<string> whitelist = readWordsFromFile("words.txt");
+    
     // Word counting
     map<string, int> wordCount;
-    countWords(cleanContent, wordCount);
+    countWords(cleanContent, wordCount, whitelist);
 
     cout << "\nWord counts (ascending order):" << endl;
     displayWordCounts(wordCount);
