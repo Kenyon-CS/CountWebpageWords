@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <cctype>
 #include <curl/curl.h>
 
